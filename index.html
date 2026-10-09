@@ -13,31 +13,19 @@
 <style>
   /* ---------- Tokens ---------- */
   :root {
-    --bg: #f2f5f9;
-    --surface: #ffffff;
-    --ink: #17212f;
-    --muted: #55637a;
-    --line: #d5dce7;
-    --edge: #3558d6;      /* citation-link blue */
-    --edge-soft: #3558d61f;
-    --hub: #e59b12;       /* highly cited node */
-    --media-bg: #e4eaf3;
+    --bg: #fff6db;
+    --surface: #fffcf0;
+    --ink: #2a2415;
+    --muted: #6e5e3c;
+    --line: #ebd7a0;
+    --edge: #1b6fb8;      /* citation-link blue */
+    --edge-soft: #1b6fb81f;
+    --hub: #f0a000;       /* highly cited node */
+    --media-bg: #fbe6ae;
+    --shadow: 0 14px 34px -16px rgba(190, 125, 10, .45);
     --radius: 6px;
     --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
     --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0f1623;
-      --surface: #172033;
-      --ink: #e8edf5;
-      --muted: #9aa8bf;
-      --line: #2a3750;
-      --edge: #7f9cff;
-      --edge-soft: #7f9cff26;
-      --hub: #f2b234;
-      --media-bg: #1d2940;
-    }
   }
 
   /* ---------- Base ---------- */
@@ -70,8 +58,12 @@
   nav a:hover { color: var(--ink); }
 
   /* ---------- Hero ---------- */
-  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
-  .hero .wrap { position: relative; padding: clamp(4.5rem, 12vw, 9rem) 0 clamp(4rem, 9vw, 7rem); }
+  /* Afternoon sky fading into warm light */
+  .hero {
+    position: relative; overflow: hidden; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #cde7f9 0%, #f3f1d6 45%, #fff0bf 80%, var(--bg) 100%);
+  }
+  .hero .wrap { position: relative; z-index: 1; padding: clamp(4.5rem, 12vw, 9rem) 0 clamp(4rem, 9vw, 7rem); }
   .hero h1 {
     font: 800 clamp(3.4rem, 10vw, 7.2rem)/.92 var(--display);
     letter-spacing: -.035em;
@@ -83,9 +75,9 @@
   .btn {
     display: inline-block; padding: .7rem 1.2rem; border-radius: var(--radius);
     font-weight: 600; font-size: .98rem; text-decoration: none;
-    border: 1.5px solid var(--ink); color: var(--ink); background: var(--bg);
+    border: 1.5px solid var(--ink); color: var(--ink); background: var(--surface);
   }
-  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn.primary { background: var(--ink); color: var(--surface); }
   .btn:hover { border-color: var(--edge); }
   .btn.primary:hover { background: var(--edge); border-color: var(--edge); color: #fff; }
 
@@ -110,6 +102,7 @@
       linear-gradient(135deg, transparent 49.5%, var(--line) 49.5%, var(--line) 50.5%, transparent 50.5%) 0 0 / 22px 22px,
       var(--media-bg);
     border: 1px solid var(--line);
+    box-shadow: var(--shadow);
     aspect-ratio: 4 / 3;
   }
   .media::before {
@@ -137,8 +130,8 @@
 
   /* ---------- Projects ---------- */
   .projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-  .project { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
-  .project .media { border-radius: 0; border: 0; border-bottom: 1px solid var(--line); aspect-ratio: 16 / 9; }
+  .project { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); }
+  .project .media { border-radius: 0; border: 0; border-bottom: 1px solid var(--line); box-shadow: none; aspect-ratio: 16 / 9; }
   .project-body { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; gap: .8rem; flex: 1; }
   .project .when { color: var(--muted); font-size: .92rem; margin: 0; }
   .project p { margin: 0; }
