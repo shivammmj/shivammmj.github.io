@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shivam Joshi | IIT Madras</title>
+<meta name="description" content="Shivam Joshi is an M.S. by Research student at IIT Madras working on scholarly knowledge graphs, citation networks and NLP, with a background in RPA and CRM implementation.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+  /* ---------- Tokens ---------- */
+  :root {
+    --bg: #f2f5f9;
+    --surface: #ffffff;
+    --ink: #17212f;
+    --muted: #55637a;
+    --line: #d5dce7;
+    --edge: #3558d6;      /* citation-link blue */
+    --edge-soft: #3558d61f;
+    --hub: #e59b12;       /* highly cited node */
+    --media-bg: #e4eaf3;
+    --radius: 6px;
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1623;
+      --surface: #172033;
+      --ink: #e8edf5;
+      --muted: #9aa8bf;
+      --line: #2a3750;
+      --edge: #7f9cff;
+      --edge-soft: #7f9cff26;
+      --hub: #f2b234;
+      --media-bg: #1d2940;
+    }
+  }
+
+  /* ---------- Base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 1.0625rem/1.65 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--edge); text-underline-offset: 3px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 3px solid var(--hub); outline-offset: 3px; border-radius: 3px; }
+  .wrap { width: min(1080px, 100% - 3rem); margin-inline: auto; }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .brand { font: 700 1.1rem var(--display); color: var(--ink); text-decoration: none; }
+  nav ul { list-style: none; display: flex; gap: 1.4rem; margin: 0; padding: 0; }
+  nav a { color: var(--muted); text-decoration: none; font-size: .95rem; font-weight: 500; }
+  nav a:hover { color: var(--ink); }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero .wrap { position: relative; padding: clamp(4.5rem, 12vw, 9rem) 0 clamp(4rem, 9vw, 7rem); }
+  .hero h1 {
+    font: 800 clamp(3.4rem, 10vw, 7.2rem)/.92 var(--display);
+    letter-spacing: -.035em;
+    margin: 0 0 1.6rem;
+  }
+  .hero .lede { font-size: clamp(1.15rem, 2.2vw, 1.5rem); line-height: 1.45; max-width: 34ch; margin: 0 0 1.2rem; font-weight: 500; }
+  .hero .sub { color: var(--muted); max-width: 52ch; margin: 0 0 2rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+  .btn {
+    display: inline-block; padding: .7rem 1.2rem; border-radius: var(--radius);
+    font-weight: 600; font-size: .98rem; text-decoration: none;
+    border: 1.5px solid var(--ink); color: var(--ink); background: var(--bg);
+  }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  .btn:hover { border-color: var(--edge); }
+  .btn.primary:hover { background: var(--edge); border-color: var(--edge); color: #fff; }
+
+  /* ---------- Sections ---------- */
+  section { padding: clamp(3.5rem, 8vw, 6rem) 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: 0; }
+  h2 { font: 700 clamp(1.9rem, 4vw, 2.7rem)/1.1 var(--display); letter-spacing: -.02em; margin: 0 0 2.4rem; }
+  h3 { font: 700 1.35rem/1.25 var(--display); margin: 0; letter-spacing: -.01em; }
+
+  /* About */
+  .about { display: grid; grid-template-columns: 260px 1fr; gap: 3rem; align-items: start; }
+  .about p { margin: 0 0 1rem; max-width: 62ch; }
+  .facts { margin: 1.6rem 0 0; display: grid; grid-template-columns: max-content 1fr; gap: .45rem 1.4rem; font-size: .98rem; }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; }
+
+  /* ---------- Image slots ---------- */
+  /* Drop a file at the path in <img src>. If it's missing, the monogram shows instead. */
+  .media {
+    position: relative; overflow: hidden; border-radius: var(--radius);
+    background:
+      linear-gradient(135deg, transparent 49.5%, var(--line) 49.5%, var(--line) 50.5%, transparent 50.5%) 0 0 / 22px 22px,
+      var(--media-bg);
+    border: 1px solid var(--line);
+    aspect-ratio: 4 / 3;
+  }
+  .media::before {
+    content: attr(data-mark);
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font: 800 2.6rem var(--display); letter-spacing: -.02em; color: var(--edge); opacity: .55;
+  }
+  .media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--media-bg); }
+  .media.portrait { aspect-ratio: 4 / 5; }
+  .media.wide { aspect-ratio: 16 / 9; }
+
+  /* ---------- Entries (experience / education) ---------- */
+  .entries { display: grid; gap: 3.2rem; }
+  .entry { display: grid; grid-template-columns: 260px 1fr; gap: 2.4rem; }
+  .entry-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .3rem 1.5rem; margin-bottom: .2rem; }
+  .entry .when { color: var(--muted); font-size: .95rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .entry .org { color: var(--edge); font-weight: 600; margin: 0 0 .9rem; }
+  .entry ul { margin: 0; padding-left: 1.2rem; }
+  .entry li { margin-bottom: .45rem; max-width: 66ch; }
+  .entry li::marker { color: var(--hub); }
+
+  /* Experience is a sequence in time, so it gets a spine */
+  #experience .entries { position: relative; }
+  #experience .entry { position: relative; }
+
+  /* ---------- Projects ---------- */
+  .projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  .project { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; }
+  .project .media { border-radius: 0; border: 0; border-bottom: 1px solid var(--line); aspect-ratio: 16 / 9; }
+  .project-body { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; gap: .8rem; flex: 1; }
+  .project .when { color: var(--muted); font-size: .92rem; margin: 0; }
+  .project p { margin: 0; }
+  .tags { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; margin: auto 0 0; padding-top: .4rem; }
+  .tags li { font-size: .84rem; padding: .12rem .6rem; border: 1px solid var(--line); border-radius: 99px; color: var(--muted); background: var(--bg); }
+  .project .links { margin: 0; font-size: .95rem; font-weight: 600; }
+
+  /* ---------- Skills ---------- */
+  .skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4rem; }
+  .skills h3 { font-size: 1.1rem; margin-bottom: .7rem; }
+  .skills p { margin: 0; color: var(--muted); }
+
+  /* ---------- Contact ---------- */
+  .contact p { max-width: 54ch; margin: 0 0 1.6rem; }
+  footer { padding: 2rem 0 3rem; color: var(--muted); font-size: .9rem; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .about, .entry { grid-template-columns: 1fr; gap: 1.4rem; }
+    .about .media { max-width: 240px; }
+    .entry .media { max-width: 360px; }
+    .projects { grid-template-columns: 1fr; }
+    .skills { grid-template-columns: 1fr; gap: 1.6rem; }
+    nav ul { gap: 1rem; }
+    nav li:nth-child(n+5) { display: none; }
+  }
+  @media (max-width: 520px) {
+    nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="#top">Shivam Joshi</a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ===== Hero ===== -->
+  <div class="hero">
+    <div class="wrap">
+      <h1>Shivam Joshi</h1>
+      <p class="lede">Research student and builder working on knowledge graphs, NLP and automation.</p>
+      <p class="sub">M.S. by Research in Management (Information Systems) at IIT Madras. Before this I worked as an RPA Developer at Endress+Hauser.</p>
+      <div class="actions">
+        <a class="btn primary" href="#projects">See my projects</a>
+        <a class="btn" href="mailto:shivamj12322@gmail.com">Email me</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== About ===== -->
+  <section id="about">
+    <div class="wrap about">
+      <!-- Replace with your photo: images/shivam.jpg -->
+      <div class="media portrait" data-mark="SJ">
+        <img src="images/shivam.jpg" alt="Portrait of Shivam Joshi" loading="lazy" onerror="this.remove()">
+      </div>
+      <div>
+        <h2>About</h2>
+        <p>I'm a research student at IIT Madras. I'm building a scholarly knowledge graph over Information Systems literature, and a language pipeline that finds new categories in over a million employee reviews.</p>
+        <p>Before research, I spent a year as an RPA Developer at Endress+Hauser, where I built automations for international teams. I also moved three small businesses from spreadsheets to CRM systems, which meant training their teams as well as building the system.</p>
+        <dl class="facts">
+          <dt>Now</dt><dd>M.S. by Research, IIT Madras (2025 to present)</dd>
+          <dt>Also</dt><dd>Teaching Assistant for Software Product Management; Coordinator, IITM Placement Team</dd>
+          <dt>Based in</dt><dd>Chennai, India</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Projects ===== -->
+  <section id="projects">
+    <div class="wrap">
+      <h2>Projects</h2>
+      <div class="projects">
+
+        <article class="project">
+          <!-- Replace with a graph screenshot or diagram: images/knowledge-graph.jpg -->
+          <div class="media wide" data-mark="KG">
+            <img src="images/knowledge-graph.jpg" alt="Visualisation of the scholarly knowledge graph" loading="lazy" onerror="this.remove()">
+          </div>
+          <div class="project-body">
+            <h3>Scholarly Knowledge Graph for Citation Network Analysis</h3>
+            <p class="when">IIT Madras, 2025 to present</p>
+            <p>A knowledge graph over Information Systems academic literature, with a GraphRAG pipeline on top. It combines dense embedding retrieval with graph traversal to expand context, so LLM answers stay grounded in the papers and the citations between them.</p>
+            <ul class="tags" aria-label="Technologies">
+              <li>Neo4j</li><li>GraphRAG</li><li>Embeddings</li><li>LLMs</li>
+            </ul>
+            <!-- <p class="links"><a href="https://github.com/YOUR_USERNAME/REPO">View on GitHub</a></p> -->
+          </div>
+        </article>
+
+        <article class="project">
+          <!-- Replace with a UMAP cluster plot or annotation tool screenshot: images/sentiment-clustering.jpg -->
+          <div class="media wide" data-mark="ES">
+            <img src="images/sentiment-clustering.jpg" alt="UMAP plot of employee review clusters" loading="lazy" onerror="this.remove()">
+          </div>
+          <div class="project-body">
+            <h3>Employee Sentiment Clustering Pipeline</h3>
+            <p class="when">IIT Madras, 2025 to present</p>
+            <p>Collected and analysed more than 1.6 million employee reviews from Glassdoor and AmbitionBox to surface new workplace sentiment categories and their drivers. The pipeline classifies reviews as HR or non-HR, then clusters them semantically. I compared MPNet against BGE and E5 embeddings, and built a custom annotation tool for blind validation.</p>
+            <ul class="tags" aria-label="Technologies">
+              <li>NLP</li><li>MPNet</li><li>BGE / E5</li><li>HDBSCAN</li><li>UMAP</li>
+            </ul>
+            <!-- <p class="links"><a href="https://github.com/YOUR_USERNAME/REPO">View on GitHub</a></p> -->
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Experience ===== -->
+  <section id="experience">
+    <div class="wrap">
+      <h2>Experience</h2>
+      <div class="entries">
+
+        <article class="entry">
+          <!-- images/endress-hauser.jpg : office photo, team photo, or a Bot Store screenshot -->
+          <div class="media" data-mark="E+H">
+            <img src="images/endress-hauser.jpg" alt="Endress+Hauser Bot Store or team" loading="lazy" onerror="this.remove()">
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>RPA Developer</h3>
+              <span class="when">2023 to 2024</span>
+            </div>
+            <p class="org">Endress+Hauser Group</p>
+            <ul>
+              <li>One of four people chosen for the company's RPA Center of Excellence, building automations for international clients from requirements through delivery.</li>
+              <li>Designed and launched an internal Bot Store on SharePoint, a self-serve catalogue where employees find and request existing automations.</li>
+              <li>Evaluated Automation Anywhere, Power Automate and SAP Build Automation to guide the company's tool selection.</li>
+              <li>Built 6+ bots in VBScript and Python using REST APIs, SAP BAPI, and web scraping (BeautifulSoup, Selenium, OCR) across SAP, Salesforce, SharePoint and Outlook.</li>
+              <li>Worked with both SQL and NoSQL data systems.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="entry">
+          <!-- images/think-technology.jpg -->
+          <div class="media" data-mark="TT">
+            <img src="images/think-technology.jpg" alt="Think Technology Services" loading="lazy" onerror="this.remove()">
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>Implementation Intern</h3>
+              <span class="when">2022 to 2023</span>
+            </div>
+            <p class="org">Think Technology Services</p>
+            <ul>
+              <li>Led planning, design and implementation for moving three small-business clients from raw spreadsheets to unified CRM systems.</li>
+              <li>Connected client websites, landing pages and databases to the CRM, and built customer journeys and automation pipelines inside it.</li>
+              <li>Trained client teams on the platform and supported technical pre-sales for other implementation leads.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="entry">
+          <!-- images/lnt-infotech.jpg -->
+          <div class="media" data-mark="LTI">
+            <img src="images/lnt-infotech.jpg" alt="Larsen &amp; Toubro Infotech" loading="lazy" onerror="this.remove()">
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>Summer Intern</h3>
+              <span class="when">2019</span>
+            </div>
+            <p class="org">Larsen &amp; Toubro Infotech</p>
+            <ul>
+              <li>Built web applications with ASP.NET.</li>
+              <li>Wrote automated browser tests with Selenium.</li>
+            </ul>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Education ===== -->
+  <section id="education">
+    <div class="wrap">
+      <h2>Education</h2>
+      <div class="entries">
+
+        <article class="entry">
+          <!-- images/iitm.jpg : campus photo -->
+          <div class="media" data-mark="IITM">
+            <img src="images/iitm.jpg" alt="IIT Madras campus" loading="lazy" onerror="this.remove()">
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>M.S. by Research, Management (Information Systems)</h3>
+              <span class="when">2025 to present</span>
+            </div>
+            <p class="org">Indian Institute of Technology Madras</p>
+            <ul>
+              <li>Teaching Assistant for Software Product Management.</li>
+              <li>Coordinator, IITM Placement Team.</li>
+              <li>Coursework: NLP, Machine Learning, Social Networks, Data Analysis for Research, Decision Support Systems, Management Information Systems, Research Methodology in Business and Management, Financial Accounting, Marketing Management.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="entry">
+          <!-- images/mumbai-university.jpg -->
+          <div class="media" data-mark="MU">
+            <img src="images/mumbai-university.jpg" alt="University of Mumbai" loading="lazy" onerror="this.remove()">
+          </div>
+          <div>
+            <div class="entry-head">
+              <h3>B.E., Information Technology</h3>
+              <span class="when">2020 to 2023</span>
+            </div>
+            <p class="org">University of Mumbai</p>
+            <ul>
+              <li>Member, Computer Society of India (CSI).</li>
+            </ul>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Skills ===== -->
+  <section id="skills">
+    <div class="wrap">
+      <h2>Skills</h2>
+      <div class="skills">
+        <div>
+          <h3>Technical</h3>
+          <p>Machine learning, NLP, databases (SQL and NoSQL), web scraping, Python, VBScript, Neo4j.</p>
+        </div>
+        <div>
+          <h3>Research</h3>
+          <p>Qualitative and quantitative research methods.</p>
+        </div>
+        <div>
+          <h3>Delivery</h3>
+          <p>Requirements gathering, customer journey design, stakeholder training, technical pre-sales, tool evaluation and selection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Contact ===== -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <h2>Get in touch</h2>
+      <p>I'm happy to talk about research, knowledge graphs, or automation work. Email is the quickest way to reach me.</p>
+      <div class="actions">
+        <a class="btn primary" href="mailto:shivamj12322@gmail.com">shivamj12322@gmail.com</a>
+        <a class="btn" href="https://linkedin.com/in/shivam-joshi-3a8008196" rel="noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/YOUR_USERNAME" rel="noopener">GitHub</a>
+        <!-- <a class="btn" href="Shivam_Resume.pdf">Download resume</a> -->
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">Shivam Joshi, Chennai, India</div>
+</footer>
+
+</body>
+</html>
